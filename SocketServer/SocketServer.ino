@@ -5,15 +5,25 @@
 const char* ssid = "";      //Set your Wifi ssid
 const char* password = "";  //Set your Wifi password
 
+const int listeningLedPin = 26;
+const int buttonPin = 25;
+bool startConnection = false;
+
 WiFiServer server(10000);  //Set desired PORT
 
 void setup() {
   Serial.begin(115200);
+  pinMode(listeningLedPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
   TCPCommunicationSetup();
 }
 
 void loop() {
-  TCPCommunication();
+  if(startConnection){
+    TCPCommunication();}
+  if(digitalRead(buttonPin) == HIGH){
+    startConnection=!startConnection;
+  }
 }
 
 void TCPCommunicationSetup(){
@@ -32,12 +42,18 @@ void TCPCommunicationSetup(){
 void TCPCommunication(){
   WiFiClient client = server.available(); //Connected client check
   if (client) {
-    Serial.println("New TCP connection");
-    
     String receivedText = client.readStringUntil('\r');     //Read client string
-    Serial.print("Received text: ");
-    Serial.println(receivedText);
-    client.stop();  //Close connection
-    Serial.println("TCP connection closed");
+    if(receivedText.equals("HIGH")) {
+      digitalWrite(listeningLedPin, HIGH); 
     }
+    else if(receivedText == "LOW"){
+      digitalWrite(listeningLedPin, LOW); 
+    }
+    else if(receivedText!=NULL){
+      Serial.print("Received text: ");
+      Serial.println(receivedText);
+      client.stop();  //Close connection
+      Serial.println("TCP connection closed");
+    }
+  }
 }
