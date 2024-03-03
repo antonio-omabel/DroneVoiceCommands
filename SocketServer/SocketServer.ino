@@ -2,8 +2,8 @@
 #include <WiFiClient.h>
 #include <WiFiAP.h>
 
-const char* ssid = "TIM-24364625";
-const char* password = "tRK27u27beDF9TX6u4uYTK6H";
+const char* ssid = "";      //Set your Wifi ssid
+const char* password = "";  //Set your Wifi password
 
 WiFiServer server(10000);  //Set desired PORT
 
