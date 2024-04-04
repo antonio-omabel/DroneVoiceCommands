@@ -1,47 +1,44 @@
-import pyaudio
 import speech_recognition as sr
 import threading
 import keyboard as kb
-import SocketCommunication as sc
+
+import SocketCommunication_V02 as sc
+import wave
+def bytes_to_wav(byte_data, filename):
+    with wave.open(filename, 'wb') as wav_file:
+        wav_file.setnchannels(sc.CHANNELS)
+        wav_file.setsampwidth(2)
+        wav_file.setframerate(sc.RATE)
+        wav_file.writeframes(byte_data)
+
 recognizer = sr.Recognizer()
 
 availableLanguages = ["it-IT", "en-US"]  # List of all available languages
 currentLanguage = availableLanguages[0]  # Chosen language
 
-# Set registration parameters
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
-
-is_recording = False    # Recording tracking
+global isRecording
+isRecording = False    # Recording tracking
 
 
 def listen_microphone():
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=FORMAT, channels=CHANNELS,
-                        rate=RATE, input=True,
-                        frames_per_buffer=CHUNK)
-    print("Listening...")
-    frames = []
+    print("Loading...")
 
-    while is_recording:
-        data = stream.read(CHUNK)
-        frames.append(data)
+    frames = []
+    while isRecording:
+        audio_data = sc.UseESPMicrophone()
+        frames.append(audio_data)
 
     print("Stop listening.")
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
     audio_data = b''.join(frames)
+    print(frames)
+    bytes_to_wav(audio_data, '../output.wav')
 
     try:
-        audio_data = sr.AudioData(audio_data, RATE, 2)                      # Convert audio data
+
+        audio_data = sr.AudioData(audio_data, sc.RATE, 2)                      # Convert audio data
         print("Recognizing...")
         text = recognizer.recognize_google(audio_data, language=currentLanguage)        # Real speech recognition
-        sc.SendTCPString(text)
-        print("You said:", text)
+        print(text)
     except sr.UnknownValueError:
         print("Could not understand audio")
     except sr.RequestError as e:
@@ -49,9 +46,9 @@ def listen_microphone():
 
 
 def toggle_recording():  # Start listening if not listening.
-    global is_recording
-    is_recording = not is_recording
-    if is_recording:
+    global isRecording
+    isRecording = not isRecording
+    if isRecording:
         threading.Thread(target=listen_microphone).start()
 
 

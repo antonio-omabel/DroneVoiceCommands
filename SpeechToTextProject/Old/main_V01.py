@@ -1,5 +1,5 @@
 import speech_recognition as sr
-import SocketCommunication as sc
+from Old import SocketCommunication_V01 as sc
 
 recognizer_instance = sr.Recognizer()
 
