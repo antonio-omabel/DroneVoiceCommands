@@ -12,7 +12,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
     print("Connection from " + address[0] + ":" + str(address[1]))
 
 
-def GetCHUNKAudio(chunk):
+def get_CHUNK_audio(chunk):
     try:
         data = conn.recv(chunk)
         print(f"Received {len(data)} bytes")

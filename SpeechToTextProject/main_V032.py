@@ -26,25 +26,25 @@ availableLanguages = ["it-IT", "en-US"]  # List of all available languages
 currentLanguage = availableLanguages[0]  # Chosen language
 
 
-def listen_microphone():
+def listen_client():
     print("Loading...")
 
     frames = []
     while isRecording:
-        data = sc.GetCHUNKAudio(CHUNK)
+        data = sc.get_CHUNK_audio(CHUNK)
         frames.append(data)
     stream.stop_stream()
     stream.close()
     audio.terminate()
     audio_data = b''.join(frames)
-    stt.Transcript(audio_data, currentLanguage, RATE, audio, FORMAT)
+    stt.transcript_audio(audio_data, currentLanguage, RATE, audio, FORMAT)
 
 
 def toggle_recording():  # Start listening if not listening.
     global isRecording
     isRecording = not isRecording
     if isRecording:
-        threading.Thread(target=listen_microphone).start()
+        threading.Thread(target=listen_client).start()
 
 
 def start_stop_listening():
