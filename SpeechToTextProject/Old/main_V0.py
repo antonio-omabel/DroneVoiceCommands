@@ -14,7 +14,6 @@ while(isListening):   #listening loop
         #recognizer_instance.pause_threshold = 3.0  #stop listening if pause is >= threshold
         recognizer_instance.adjust_for_ambient_noise(source)    #get audio from mic while noise is detected
         if currentLanguage == "it-IT":
-            s
             print("In ascolto...")
             audio = recognizer_instance.listen(source,5,phraseTimeLimit)
             print("Elaborazione...")

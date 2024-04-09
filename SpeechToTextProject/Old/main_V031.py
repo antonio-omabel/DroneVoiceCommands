@@ -1,12 +1,8 @@
 import speech_recognition as sr
 import threading
 import keyboard as kb
-
 import socket
 import pyaudio
-
-import wave
-
 
 HOST = '192.168.1.67'  # Set HOST IP
 ESP32_IP = '192.168.1.147'  # Set ESP32 IP
