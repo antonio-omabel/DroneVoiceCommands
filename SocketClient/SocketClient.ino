@@ -31,7 +31,7 @@ void setup(){
   config.pin_ws=21;   //25
   config.pin_bck=9;    //22
   config.pin_data=8;     ///21
-  config.channels = 2;
+  config.channels = 1;
   config.port_no = 0;
   config.bits_per_sample = 32;
   i2sStream.begin(config);
