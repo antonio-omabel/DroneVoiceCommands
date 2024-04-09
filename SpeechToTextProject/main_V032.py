@@ -27,11 +27,12 @@ currentLanguage = availableLanguages[0]  # Chosen language
 
 def listen_client():
     print("Loading...")
-
     frames = []
+    conn = sc.open_connection()
     while isRecording:
-        data = sc.get_CHUNK_audio(CHUNK)
+        data = sc.get_CHUNK_audio(conn, CHUNK)
         frames.append(data)
+    sc.close_connection()
     stream.stop_stream()
     stream.close()
     audio.terminate()
