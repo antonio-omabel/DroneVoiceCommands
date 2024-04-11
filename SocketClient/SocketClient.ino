@@ -9,20 +9,21 @@ WiFiClient client;
 MeasuringStream clientTimed(client);
 
 StreamCopy copier(clientTimed, i2sStream, 2048);  
-const char* ssid = "";      //Set your Wifi ssid
-const char* password = "";  //Set your Wifi password
-const char *client_address = "192.168.1.67"; // update based on your receive ip
+const char* ssid = "TIM-24364625";      //Set your Wifi ssid
+const char* password = "tRK27u27beDF9TX6u4uYTK6H";  //Set your Wifi password
+const char *host_address = "192.168.1.67"; // update based on your receive ip
 uint16_t port = 5006;
-
-
-
+const int LED = 0;
+const int inputPin = 1;
+bool isListeningLoop = false;
 
 void setup(){
+  pinMode(LED, OUTPUT);
+  pinMode(inputPin, INPUT_PULLUP);
   Serial.begin(115200);
   AudioLogger::instance().begin(Serial, AudioLogger::Info);
   connectWifi();
-
-
+  
   // start i2s input with default configuration
   Serial.println("starting I2S...");
   auto config = i2sStream.defaultConfig(RX_MODE);
@@ -36,14 +37,22 @@ void setup(){
   config.bits_per_sample = 32;
   i2sStream.begin(config);
   Serial.println("I2S started");
-
- 
 }
 
 // Arduino loop  
 void loop() {
-  connectIP();  // e.g if client is shut down we try to reconnect
-  copier.copy();
+  connectIP();  // e.g if host is shut down we try to reconnect
+  while(digitalRead(inputPin) == LOW){
+    analogWrite(LED, 10);
+    copier.copy();
+    isListeningLoop = true;
+  }
+  if (isListeningLoop){
+    client.stop();
+    analogWrite(LED, LOW);
+    isListeningLoop = false;
+  }
+  
 }
 
 
@@ -64,7 +73,8 @@ void loop() {
 
   void connectIP() {
     if (!client.connected()){
-      while (!client.connect(client_address, port)) {
+      while (!client.connect(host_address, port)) {
+        analogWrite(LED, LOW);
         Serial.println("trying to connect...");
         delay(5000);
       }    

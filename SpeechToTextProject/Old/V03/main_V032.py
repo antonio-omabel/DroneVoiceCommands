@@ -3,7 +3,7 @@ import threading
 import keyboard as kb
 import pyaudio
 import SocketCommunication_V03 as sc
-import SpeechToText_V0 as stt
+import SpeechToText_V03 as stt
 
 # pyaudio parameters
 audio = pyaudio.PyAudio()
