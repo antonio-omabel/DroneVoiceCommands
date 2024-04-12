@@ -11,5 +11,5 @@ def transcript_audio(audio_data, current_language, rate, audio, audio_format):
         print(text)
     except sr.UnknownValueError:
         print("Could not understand audio")
-    except sr.RequestError as e:
-        print("Could not request results; {0}".format(e))
+    except sr.RequestError:
+        print("Could not request results")

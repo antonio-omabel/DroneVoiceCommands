@@ -1,9 +1,7 @@
 #include "AudioTools.h"
 #include "WiFi.h"
 
-
 I2SStream i2sStream;    // Access I2S as stream
-
 
 WiFiClient client;                  
 MeasuringStream clientTimed(client);
@@ -16,6 +14,7 @@ uint16_t port = 5006;
 const int LED = 0;
 const int inputPin = 1;
 bool isListeningLoop = false;
+
 
 void setup(){
   pinMode(LED, OUTPUT);
@@ -39,7 +38,7 @@ void setup(){
   Serial.println("I2S started");
 }
 
-// Arduino loop  
+  
 void loop() {
   connectIP();  // e.g if host is shut down we try to reconnect
   while(digitalRead(inputPin) == LOW){
@@ -52,7 +51,6 @@ void loop() {
     analogWrite(LED, LOW);
     isListeningLoop = false;
   }
-  
 }
 
 
@@ -70,6 +68,7 @@ void loop() {
     client.setNoDelay(true);
     esp_wifi_set_ps(WIFI_PS_NONE);
   }
+
 
   void connectIP() {
     if (!client.connected()){

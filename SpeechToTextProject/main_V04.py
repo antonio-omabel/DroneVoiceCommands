@@ -18,18 +18,16 @@ stream = audio.open(format=FORMAT,
 availableLanguages = ["it-IT", "en-US"]  # List of all available languages
 currentLanguage = availableLanguages[0]  # Chosen language
 
+
 while True:
     print("Connection...")
     conn = sc.open_connection()
     frames = []
     data = sc.get_CHUNK_audio(conn, CHUNK, CHANNELS)
-    while len(data) != 0:
-        data = sc.get_CHUNK_audio(conn, CHUNK, CHANNELS)
+    while len(data) != 0:   # Listen data while socket is open
         frames.append(data)
+        data = sc.get_CHUNK_audio(conn, CHUNK, CHANNELS)
 
-    # sc.close_connection()
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
     audio_data = b''.join(frames)
+    stream.write(audio_data)        # Play integral recorded audio
     stt.transcript_audio(audio_data, currentLanguage, RATE, audio, FORMAT)

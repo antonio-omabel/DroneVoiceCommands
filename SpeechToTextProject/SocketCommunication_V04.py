@@ -24,9 +24,3 @@ def get_CHUNK_audio(conn, chunk, channels):
         return data
     except socket.error:
         print("Client Disconnected")
-
-
-def close_connection():
-    global server_socket
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.close()
