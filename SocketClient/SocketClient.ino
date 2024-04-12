@@ -5,10 +5,11 @@ I2SStream i2sStream;    // Access I2S as stream
 
 WiFiClient client;                  
 MeasuringStream clientTimed(client);
+VolumeStream volume(i2sStream);
 
 StreamCopy copier(clientTimed, i2sStream, 2048);  
-const char* ssid = "TIM-24364625";      //Set your Wifi ssid
-const char* password = "tRK27u27beDF9TX6u4uYTK6H";  //Set your Wifi password
+const char* ssid = "";      //Set your Wifi ssid
+const char* password = "";  //Set your Wifi password
 const char *host_address = "192.168.1.67"; // update based on your receive ip
 uint16_t port = 5006;
 const int LED = 0;
@@ -36,6 +37,11 @@ void setup(){
   config.bits_per_sample = 32;
   i2sStream.begin(config);
   Serial.println("I2S started");
+
+  auto vol_config = volume.defaultConfig();
+  vol_config.volume = 2;
+  vol_config.allow_boost = true;
+  volume.begin(vol_config); // we need to provide the bits_per_sample and channels
 }
 
   
@@ -76,6 +82,6 @@ void loop() {
         analogWrite(LED, LOW);
         Serial.println("trying to connect...");
         delay(5000);
-      }    
+      }
     }
   }
