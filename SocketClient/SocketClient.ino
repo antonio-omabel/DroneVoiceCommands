@@ -10,6 +10,7 @@ VolumeStream volume(i2sStream);
 StreamCopy copier(clientTimed, i2sStream, 2048);  
 const char* ssid = "";      //Set your Wifi ssid
 const char* password = "";  //Set your Wifi password
+
 const char *host_address = "192.168.1.67"; // update based on your receive ip
 uint16_t port = 5006;
 const int LED = 0;
@@ -36,7 +37,7 @@ void setup(){
   config.port_no = 0;
   config.bits_per_sample = 32;
   i2sStream.begin(config);
-  Serial.println("I2S started");
+  Serial.println("I2S started.");
 
   auto vol_config = volume.defaultConfig();
   vol_config.volume = 2;
@@ -53,6 +54,7 @@ void loop() {
     isListeningLoop = true;
   }
   if (isListeningLoop){
+    copier.copy();
     client.stop();
     analogWrite(LED, LOW);
     isListeningLoop = false;
@@ -80,8 +82,10 @@ void loop() {
     if (!client.connected()){
       while (!client.connect(host_address, port)) {
         analogWrite(LED, LOW);
-        Serial.println("trying to connect...");
-        delay(5000);
+        Serial.println("Trying to connect...");
+        delay(1000);
       }
+      Serial.println("Connected.");
     }
+    
   }
