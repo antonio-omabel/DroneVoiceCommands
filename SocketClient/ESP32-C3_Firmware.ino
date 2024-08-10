@@ -1,62 +1,68 @@
+
+
 #include "AudioTools.h"
 #include "WiFi.h"
+
 
 I2SStream i2sStream;    // Access I2S as stream
 
 WiFiClient client;                  
 MeasuringStream clientTimed(client);
-VolumeStream volume(i2sStream);
 
 StreamCopy copier(clientTimed, i2sStream, 2048);  
-const char* ssid = "";      //Set your Wifi ssid
-const char* password = "";  //Set your Wifi password
+const char* ssid = "TIM-24364625";      //Set your Wifi ssid
+const char* password = "tRK27u27beDF9TX6u4uYTK6H";  //Set your Wifi password
+const char *client_address = "192.168.1.54"; // update based on your receive ip
+uint16_t port = 5005;
 
-const char *host_address = "192.168.1.67"; // update based on your receive ip
-uint16_t port = 5006;
 const int LED = 0;
 const int inputPin = 1;
 bool isListeningLoop = false;
 
+void setup()
+{
+  Serial.begin(115200);
 
-void setup(){
   pinMode(LED, OUTPUT);
   pinMode(inputPin, INPUT_PULLUP);
-  Serial.begin(115200);
+
   AudioLogger::instance().begin(Serial, AudioLogger::Info);
   connectWifi();
-  
+
   // start i2s input with default configuration
   Serial.println("starting I2S...");
   auto config = i2sStream.defaultConfig(RX_MODE);
   config.i2s_format = I2S_STD_FORMAT; 
-  config.sample_rate = 22050;
+  config.sample_rate = 20000;
   config.pin_ws=21;   //25
   config.pin_bck=9;    //22
   config.pin_data=8;     ///21
-  config.channels = 1;
+  config.channels = 2; // 2;
   config.port_no = 0;
   config.bits_per_sample = 32;
   i2sStream.begin(config);
-  Serial.println("I2S started.");
-
-  auto vol_config = volume.defaultConfig();
-  vol_config.volume = 2;
-  vol_config.allow_boost = true;
-  volume.begin(vol_config); // we need to provide the bits_per_sample and channels
+  Serial.println("I2S started");
 }
 
-  
-void loop() {
-  connectIP();  // e.g if host is shut down we try to reconnect
+// Arduino loop  
+void loop() 
+{
+  connectIP();  // e.g if client is shut down we try to reconnect
+
   while(digitalRead(inputPin) == LOW){
     analogWrite(LED, 10);
     copier.copy();
     isListeningLoop = true;
   }
+
   if (isListeningLoop){
-    copier.copy();
-    client.stop();
     analogWrite(LED, LOW);
+    int i=0;
+    while (i<20){
+      copier.copy();
+      i++;
+    }
+    client.stop();
     isListeningLoop = false;
   }
 }
@@ -77,15 +83,11 @@ void loop() {
     esp_wifi_set_ps(WIFI_PS_NONE);
   }
 
-
   void connectIP() {
     if (!client.connected()){
-      while (!client.connect(host_address, port)) {
-        analogWrite(LED, LOW);
-        Serial.println("Trying to connect...");
-        delay(1000);
-      }
-      Serial.println("Connected.");
+      while (!client.connect(client_address, port)) {
+        Serial.println("trying to connect...");
+        delay(500);
+      }    
     }
-    
   }

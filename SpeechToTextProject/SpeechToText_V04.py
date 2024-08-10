@@ -1,14 +1,13 @@
 import speech_recognition as sr
 
-recognizer = sr.Recognizer()
 
-
-def transcript_audio(audio_data, current_language, rate, audio, audio_format):
+def transcript_audio(audio_data, current_language, rate_times_channels, sample_size):
+    recognizer = sr.Recognizer()
     try:
-        audio_data = sr.AudioData(audio_data, rate, audio.get_sample_size(audio_format))  # Convert audio data
+        audio_data = sr.AudioData(audio_data, rate_times_channels, sample_size)  # Convert audio data
         print("Recognizing...")
         text = recognizer.recognize_google(audio_data, language=current_language)  # Real speech recognition
-        print(text)
+        return text
     except sr.UnknownValueError:
         print("Could not understand audio")
     except sr.RequestError:
