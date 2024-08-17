@@ -24,18 +24,19 @@ def main():
         conn = sc.open_connection()
         frames = []
         data = sc.get_CHUNK_audio(conn, CHUNK)
-        while len(data) != 0:   # Listen data while socket is open
-            frames.append(data)
-            data = sc.get_CHUNK_audio(conn, CHUNK)
-        sc.close_connection()
-        if len(frames) != 0:
-            audio_data = b''.join(frames)
+        if data is not None:
+            while len(data) != 0:   # Listen data while socket is open
+                frames.append(data)
+                data = sc.get_CHUNK_audio(conn, CHUNK)
+            sc.close_connection()
+            if len(frames) != 0:
+                audio_data = b''.join(frames)
 
-            play_audio(audio_data)
+                play_audio(audio_data)
 
-            text = stt.transcript_audio(audio_data, currentLanguage, RATE*CHANNELS, audio.get_sample_size(FORMAT))
-            if text is not None:
-                print(text)
+                text = stt.transcript_audio(audio_data, currentLanguage, RATE*CHANNELS, audio.get_sample_size(FORMAT))
+                if text is not None:
+                    print(text)
 
         if not isRunning:
             print("Script stopped.")

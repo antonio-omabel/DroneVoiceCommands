@@ -1,6 +1,6 @@
 import socket
 
-HOST = '192.168.1.54'  # Set HOST IP
+HOST = '192.168.1.223'  # Set HOST IP
 PORT = 5005  # Set PORT
 server_socket = socket.socket()
 
@@ -17,14 +17,15 @@ def open_connection():
 
 
 def get_CHUNK_audio(conn, chunk):
+    global server_socket
     try:
+        conn.settimeout(5)
         data = conn.recv(chunk)
         print(f"Received {len(data)} bytes")
         # print(data)
         return data
     except socket.error:
-        server_socket.close()
-        print("Client Disconnected")
+        close_connection()
 
 
 def close_connection():

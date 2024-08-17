@@ -1,5 +1,3 @@
-
-
 #include "AudioTools.h"
 #include "WiFi.h"
 
@@ -12,12 +10,15 @@ MeasuringStream clientTimed(client);
 StreamCopy copier(clientTimed, i2sStream, 2048);  
 const char* ssid = "TIM-24364625";      //Set your Wifi ssid
 const char* password = "tRK27u27beDF9TX6u4uYTK6H";  //Set your Wifi password
-const char *client_address = "192.168.1.54"; // update based on your receive ip
+const char *client_address = "192.168.1.223"; // update based on your receive ip
 uint16_t port = 5005;
 
 const int LED = 0;
 const int inputPin = 1;
 bool isListeningLoop = false;
+bool isConnectionOpen = false;
+unsigned long lastReadTime = 0;
+unsigned long timeoutInterval = 5000;
 
 void setup()
 {
@@ -54,6 +55,12 @@ void loop()
     copier.copy();
     isListeningLoop = true;
   }
+  
+  if (millis() - lastReadTime > timeoutInterval && isConnectionOpen) {
+    client.stop();
+    Serial.println("Connection Closed.");
+    isConnectionOpen = false;
+  }
 
   if (isListeningLoop){
     analogWrite(LED, LOW);
@@ -63,6 +70,7 @@ void loop()
       i++;
     }
     client.stop();
+    Serial.println("Connection Closed.");
     isListeningLoop = false;
   }
 }
@@ -88,6 +96,11 @@ void loop()
       while (!client.connect(client_address, port)) {
         Serial.println("trying to connect...");
         delay(500);
-      }    
+      }
+      if(!isConnectionOpen){
+        Serial.println("Connection opened.");
+      }
+      isConnectionOpen = true;
+      lastReadTime = millis();    
     }
   }
