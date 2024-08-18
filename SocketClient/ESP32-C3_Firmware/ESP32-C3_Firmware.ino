@@ -56,22 +56,23 @@ void loop()
     isListeningLoop = true;
   }
   
-  if (millis() - lastReadTime > timeoutInterval && isConnectionOpen) {
-    client.stop();
-    Serial.println("Connection Closed.");
-    isConnectionOpen = false;
-  }
-
   if (isListeningLoop){
     analogWrite(LED, LOW);
     int i=0;
-    while (i<20){
+    while (i<15){
       copier.copy();
       i++;
     }
     client.stop();
-    Serial.println("Connection Closed.");
+    Serial.println("Connection closed.");
+    isConnectionOpen = false;
     isListeningLoop = false;
+  }
+
+  if (millis() - lastReadTime > timeoutInterval && isConnectionOpen) {
+    client.stop();
+    Serial.println("Connection closed.");
+    isConnectionOpen = false;
   }
 }
 
