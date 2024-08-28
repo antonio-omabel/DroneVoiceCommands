@@ -26,3 +26,10 @@
   void connectWifi();
   void connectIP();
 #endif //USE_WIFI
+
+////////////////////////// PIN configuration ///////////////////
+
+/// ESP32 pin Number associated with LED 
+const int LED = 0;
+/// ESP32 pin Number associated with Button
+const int BUTTON = 1;

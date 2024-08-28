@@ -20,17 +20,13 @@
 ///Access I2S as stream
 I2SStream i2sStream;
   #ifdef USE_WIFI 
-  ///Thruput misurator  
+  /// Throughput misurator  
   MeasuringStream clientTimed(client);
   ///Audio copier
   StreamCopy copier(clientTimed, i2sStream, 2048);
   #endif //USE_WIFI
 #endif //USE_MICRO
 
-///Choose your led pin
-const int LED = 0;
-///Choose your button pin
-const int BUTTON = 1;
 ///Data sending check
 bool isListeningLoop = false;
 
@@ -39,14 +35,15 @@ bool isListeningLoop = false;
 */
 void setup()
 {
+  /// HW peripheral setup
   Serial.begin(115200);
   pinMode(LED, OUTPUT);
   pinMode(BUTTON, INPUT_PULLUP);
-
+  /// WiFi Setup
   #ifdef USE_WIFI
     connectWifi();
   #endif  //USE_WIFI
-
+  /// Microphone setup
   #ifdef USE_MICRO
     AudioLogger::instance().begin(Serial, AudioLogger::Info);
     microphoneSetup();
@@ -59,11 +56,12 @@ void setup()
 */ 
 void loop() 
 {
+  /// Activates WiFi connection if missing
   #ifdef USE_WIFI
     connectIP();
   #endif  //USE_WIFI
 
-  ///Send data while button is pressed
+  /// Sends data while button is pressed
   while(digitalRead(BUTTON) == LOW){
     analogWrite(LED, 10);
     #ifdef USE_MICRO
@@ -74,7 +72,7 @@ void loop()
     isListeningLoop = true;
   }
   
-  ///Close the connection if data is being sent
+  /// Closes the connection if data has been sent
   if (isListeningLoop){
     analogWrite(LED, LOW);
     #ifdef USE_WIFI
