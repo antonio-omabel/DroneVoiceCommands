@@ -50,4 +50,4 @@ void connectIP() {
     lastReadTime = millis();    
   }
 }
-#endif
+#endif //USE_WIFI
